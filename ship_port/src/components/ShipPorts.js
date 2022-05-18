@@ -39,6 +39,7 @@ export default function ShipPorts() {
   return (
     <div>
       <h1>ovo je zaglavlje</h1>
+      <p>zaglavlje</p>
       <Table responsive bordered hover>
         <thead>
           <tr>
