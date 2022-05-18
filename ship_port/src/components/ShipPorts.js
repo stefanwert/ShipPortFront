@@ -57,9 +57,6 @@ export default function ShipPorts() {
         </tbody>
       </Table>
       <Modal size="lg" show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
         <Modal.Body>
           <div class="wrapper">
             <div class="two-blox">
@@ -93,7 +90,7 @@ export default function ShipPorts() {
                   backgroundSize: "100%",
                 }}
               >
-                3
+                warehouses
               </div>
               <div
                 class="box"
@@ -103,16 +100,11 @@ export default function ShipPorts() {
                   backgroundSize: "100%",
                 }}
               >
-                4
+                transports
               </div>
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </div>
   );
