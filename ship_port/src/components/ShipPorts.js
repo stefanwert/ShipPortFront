@@ -10,13 +10,22 @@ import ship from "../resource/ship.jfif";
 import workers from "../resource/workers.jpg";
 import transport from "../resource/transport.jpg";
 import warehouse from "../resource/warehouse.jpg";
+import Form from "react-bootstrap/Form";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import EditShipPort from "./EditShipPort";
 
 export default function ShipPorts() {
   const [ShipPorts, setShipPorts] = useState();
   const [selectedShipPort, setSelectedShipPort] = useState(null);
   const [show, setShow] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [newShipName, setNewShipName] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [displayEditDialog, setDisplayEditDialog] = useState(false);
+
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleCloseOfAddDialog = () => setShowAddDialog(false);
   var br = 0;
 
   useEffect(() => {
@@ -31,9 +40,54 @@ export default function ShipPorts() {
       });
   }, []);
 
-  const showOptions = (shipPort) => {
+  const handleChangeDisplayEditDialog = React.useCallback((newValue) => {
+    setDisplayEditDialog(newValue);
+  }, []);
+
+  const showOptions = () => {
     setShow(true);
-    setSelectedShipPort(shipPort);
+  };
+
+  const deleteShipPort = () => {
+    if (selectedShipPort == null) {
+      alert("Plase select ship port first !");
+      return;
+    }
+    axios({
+      method: "delete",
+      url: `${serviceConfig.URL}/shipport/${selectedShipPort?.id}`,
+    })
+      .then((response) => {
+        setShipPorts(response.data);
+        console.log(response.data);
+        window.location.href = "/";
+      })
+      .catch(() => {
+        console.log("didnt deleted ShipPort");
+      });
+  };
+
+  const editShipPortClick = () => {
+    setDisplayEditDialog(true);
+  };
+
+  const addShipPort = () => {
+    console.log(newShipName + "ship date:" + startDate);
+    axios({
+      method: "post",
+      url: `${serviceConfig.URL}/shipport/`,
+      data: {
+        Name: newShipName,
+        TimeOfCreation: startDate,
+      },
+    })
+      .then((response) => {
+        setShipPorts(response.data);
+        console.log(response.data);
+      })
+      .catch(() => {
+        console.log("didnt added ShipPort");
+      });
   };
 
   return (
@@ -48,7 +102,11 @@ export default function ShipPorts() {
         </thead>
         <tbody>
           {ShipPorts?.map((s) => (
-            <tr key={s.id} onClick={() => showOptions(s)}>
+            <tr
+              key={s.id}
+              onClick={() => setSelectedShipPort(s)}
+              onDoubleClick={() => showOptions()}
+            >
               <td>{br++}</td>
               <td>{s.name}</td>
               <td>{s.timeOfCreation.substring(0, 10)}</td>
@@ -56,6 +114,46 @@ export default function ShipPorts() {
           ))}
         </tbody>
       </Table>
+
+      <div
+        style={{
+          "text-align": "center",
+        }}
+      >
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            setShowAddDialog(true);
+          }}
+        >
+          Add ship port
+        </Button>
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            editShipPortClick();
+          }}
+        >
+          Edit ship port
+        </Button>
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            deleteShipPort();
+          }}
+        >
+          Delete ship port
+        </Button>
+      </div>
       <Modal size="lg" show={show} onHide={handleClose}>
         <Modal.Body>
           <div class="wrapper">
@@ -83,6 +181,10 @@ export default function ShipPorts() {
             </div>
             <div class="two-blox">
               <div
+                onClick={() => {
+                  window.location.href =
+                    "/warehouses?id=" + selectedShipPort.id;
+                }}
                 class="box"
                 style={{
                   backgroundImage: `url(${warehouse}) `,
@@ -106,6 +208,40 @@ export default function ShipPorts() {
           </div>
         </Modal.Body>
       </Modal>
+      <Modal show={showAddDialog} onHide={handleCloseOfAddDialog}>
+        <Form>
+          <div
+            style={{
+              margin: "10px",
+            }}
+          >
+            <Form.Group>
+              <Form.Label value={newShipName}>Name</Form.Label>
+              <Form.Control
+                placeholder="Enter name"
+                onChange={(e) => {
+                  setNewShipName(e.target.value);
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Date of creation</Form.Label>
+              <DatePicker
+                selected={startDate}
+                onChange={(date: Date) => setStartDate(date)}
+              />
+            </Form.Group>
+            <Button onClick={addShipPort} variant="primary" type="submit">
+              Submit
+            </Button>
+          </div>
+        </Form>
+      </Modal>
+      <EditShipPort
+        displayDialog={displayEditDialog}
+        shipPort={selectedShipPort}
+        onChange={handleChangeDisplayEditDialog}
+      />
     </div>
   );
 }
