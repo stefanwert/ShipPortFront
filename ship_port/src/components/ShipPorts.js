@@ -10,17 +10,16 @@ import ship from "../resource/ship.jfif";
 import workers from "../resource/workers.jpg";
 import transport from "../resource/transport.jpg";
 import warehouse from "../resource/warehouse.jpg";
-import Form from "react-bootstrap/Form";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import EditShipPort from "./EditShipPort";
+import AddShipPort from "./AddShipPort";
 
 export default function ShipPorts() {
   const [ShipPorts, setShipPorts] = useState();
   const [selectedShipPort, setSelectedShipPort] = useState(null);
   const [show, setShow] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [newShipName, setNewShipName] = useState("");
+
   const [startDate, setStartDate] = useState(new Date());
   const [displayEditDialog, setDisplayEditDialog] = useState(false);
 
@@ -42,6 +41,10 @@ export default function ShipPorts() {
 
   const handleChangeDisplayEditDialog = React.useCallback((newValue) => {
     setDisplayEditDialog(newValue);
+  }, []);
+
+  const handleChangeDisplayAddDialog = React.useCallback((newValue) => {
+    setShowAddDialog(newValue);
   }, []);
 
   const showOptions = () => {
@@ -68,26 +71,8 @@ export default function ShipPorts() {
   };
 
   const editShipPortClick = () => {
+    if (selectedShipPort == null) return;
     setDisplayEditDialog(true);
-  };
-
-  const addShipPort = () => {
-    console.log(newShipName + "ship date:" + startDate);
-    axios({
-      method: "post",
-      url: `${serviceConfig.URL}/shipport/`,
-      data: {
-        Name: newShipName,
-        TimeOfCreation: startDate,
-      },
-    })
-      .then((response) => {
-        setShipPorts(response.data);
-        console.log(response.data);
-      })
-      .catch(() => {
-        console.log("didnt added ShipPort");
-      });
   };
 
   return (
@@ -208,35 +193,12 @@ export default function ShipPorts() {
           </div>
         </Modal.Body>
       </Modal>
-      <Modal show={showAddDialog} onHide={handleCloseOfAddDialog}>
-        <Form>
-          <div
-            style={{
-              margin: "10px",
-            }}
-          >
-            <Form.Group>
-              <Form.Label value={newShipName}>Name</Form.Label>
-              <Form.Control
-                placeholder="Enter name"
-                onChange={(e) => {
-                  setNewShipName(e.target.value);
-                }}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Date of creation</Form.Label>
-              <DatePicker
-                selected={startDate}
-                onChange={(date: Date) => setStartDate(date)}
-              />
-            </Form.Group>
-            <Button onClick={addShipPort} variant="primary" type="submit">
-              Submit
-            </Button>
-          </div>
-        </Form>
-      </Modal>
+
+      <AddShipPort
+        showAddDialog={showAddDialog}
+        onChange={handleChangeDisplayAddDialog}
+      />
+
       <EditShipPort
         displayDialog={displayEditDialog}
         shipPort={selectedShipPort}

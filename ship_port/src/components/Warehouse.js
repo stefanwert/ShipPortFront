@@ -5,15 +5,30 @@ import axios from "axios";
 import { serviceConfig } from "../settings";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
+import AddWarehouse from "./AddWarehouse";
+import EditWarehouse from "./EditWarehouse";
 
 export default function Warehouse() {
   var [warehouses, setWarehouses] = useState();
   var [shipPort, setShipPort] = useState();
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+  const [shipPortId, setshipPortId] = useState(null);
+
+  const handleChangeDisplayAddDialog = React.useCallback((newValue) => {
+    setShowAddDialog(newValue);
+  }, []);
+  const handleChangeDisplayEditDialog = React.useCallback((newValue) => {
+    setShowEditDialog(newValue);
+  }, []);
+
   var br = 1;
   useEffect(() => {
     const params = new Proxy(new URLSearchParams(window.location.search), {
       get: (searchParams, prop) => searchParams.get(prop),
     });
+    setshipPortId(params.id);
     axios
       .get(`${serviceConfig.URL}/warehouse/getAllByShipPortId/` + params.id)
       .then((response) => {
@@ -32,6 +47,30 @@ export default function Warehouse() {
         console.log("didnt retrieve warehouse");
       });
   }, []);
+
+  const editWarehouseClick = () => {
+    if (selectedWarehouse == null) return;
+    setShowEditDialog(true);
+  };
+
+  const deleteWarehouse = () => {
+    if (selectedWarehouse == null) {
+      alert("Plase select ship port first !");
+      return;
+    }
+    axios({
+      method: "delete",
+      url: `${serviceConfig.URL}/warehouse/${selectedWarehouse?.id}`,
+    })
+      .then((response) => {
+        // setShipPorts(response.data);
+        window.location.href = "/warehouses?id=" + shipPortId;
+      })
+      .catch(() => {
+        console.log("didnt deleted ShipPort");
+      });
+  };
+
   return (
     <div>
       <h1
@@ -52,7 +91,7 @@ export default function Warehouse() {
         </thead>
         <tbody>
           {warehouses?.map((w) => (
-            <tr>
+            <tr key={w.id} onClick={() => setSelectedWarehouse(w)}>
               <td>{br++}</td>
               <td>{w.name}</td>
               <td>{w.storeFlammableCargo === true ? "yes" : "no"}</td>
@@ -71,6 +110,9 @@ export default function Warehouse() {
             margin: 5,
           }}
           size="lg"
+          onClick={() => {
+            setShowAddDialog(true);
+          }}
         >
           Add warehouse
         </Button>
@@ -78,10 +120,31 @@ export default function Warehouse() {
           style={{
             margin: 5,
           }}
+          onClick={() => editWarehouseClick()}
           size="lg"
+        >
+          Edit ship port
+        </Button>
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            deleteWarehouse();
+          }}
         >
           Delete warehouse
         </Button>
+        <AddWarehouse
+          showAddDialog={showAddDialog}
+          onChange={handleChangeDisplayAddDialog}
+        />
+        <EditWarehouse
+          showEditDialog={showEditDialog}
+          warehouse={selectedWarehouse}
+          onChange={handleChangeDisplayEditDialog}
+        />
       </div>
     </div>
   );

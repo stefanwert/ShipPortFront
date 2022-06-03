@@ -43,11 +43,10 @@ export default function EditShipPort(props) {
       data: ship,
     })
       .then((response) => {
-        console.log(response.data);
-        window.location.href = "/";
+        window.location.reload(true);
       })
       .catch(() => {
-        console.log("didnt added ShipPort");
+        console.log("didnt edited ShipPort");
       });
   };
   return (
