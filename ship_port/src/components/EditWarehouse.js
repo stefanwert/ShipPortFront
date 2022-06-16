@@ -89,7 +89,7 @@ export default function EditWarehouse(props) {
             />
           </Form.Group>
           <Button onClick={EditWarehouseClick} variant="primary" type="submit">
-            Submit
+            Edit
           </Button>
         </div>
       </Form>

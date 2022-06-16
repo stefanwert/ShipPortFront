@@ -5,6 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ShipPorts from "./components/ShipPorts";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Nav } from "react-bootstrap";
+import Ships from "./components/Ships";
+import ShipCaptains from "./components/Workers/ShipCaptains";
+import Crew from "./components/Workers/Crew";
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
       <Routes>
         <Route path="/" element={<ShipPorts />} />
         <Route path="/Warehouses" element={<Warehouse />} />
+        <Route path="/Ships" element={<Ships />} />
+        <Route path="/ShipCaptains" element={<ShipCaptains />} />
+        <Route path="/Crew" element={<Crew />} />
       </Routes>
     </Router>
   );

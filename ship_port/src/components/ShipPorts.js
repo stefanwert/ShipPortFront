@@ -10,6 +10,10 @@ import ship from "../resource/ship.jfif";
 import workers from "../resource/workers.jpg";
 import transport from "../resource/transport.jpg";
 import warehouse from "../resource/warehouse.jpg";
+import shipCaptain from "../resource/shipCaptain.jpg";
+import crew from "../resource/crew.jpg";
+import clerk from "../resource/clerk.jfif";
+
 import "react-datepicker/dist/react-datepicker.css";
 import EditShipPort from "./EditShipPort";
 import AddShipPort from "./AddShipPort";
@@ -19,11 +23,15 @@ export default function ShipPorts() {
   const [selectedShipPort, setSelectedShipPort] = useState(null);
   const [show, setShow] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
-
-  const [startDate, setStartDate] = useState(new Date());
+  const [hideFirstModal, setHideFirstModal] = useState(false);
+  const [hideSecundModal, setHideSecundModal] = useState(true);
   const [displayEditDialog, setDisplayEditDialog] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setHideFirstModal(false);
+    setHideSecundModal(true);
+    setShow(false);
+  };
   const handleCloseOfAddDialog = () => setShowAddDialog(false);
   var br = 0;
 
@@ -144,7 +152,11 @@ export default function ShipPorts() {
           <div class="wrapper">
             <div class="two-blox">
               <div
+                hidden={hideFirstModal}
                 class="box"
+                onClick={() => {
+                  window.location.href = "/ships?id=" + selectedShipPort.id;
+                }}
                 style={{
                   backgroundImage: `url(${ship}) `,
                   "background-repeat": "no-repeat",
@@ -154,11 +166,16 @@ export default function ShipPorts() {
                 ships
               </div>
               <div
+                hidden={hideFirstModal}
                 class="box"
                 style={{
                   backgroundImage: `url(${workers}) `,
                   "background-repeat": "no-repeat",
                   backgroundSize: "100%",
+                }}
+                onClick={() => {
+                  setHideFirstModal(true);
+                  setHideSecundModal(false);
                 }}
               >
                 workers
@@ -166,6 +183,7 @@ export default function ShipPorts() {
             </div>
             <div class="two-blox">
               <div
+                hidden={hideFirstModal}
                 onClick={() => {
                   window.location.href =
                     "/warehouses?id=" + selectedShipPort.id;
@@ -180,6 +198,7 @@ export default function ShipPorts() {
                 warehouses
               </div>
               <div
+                hidden={hideFirstModal}
                 class="box"
                 style={{
                   backgroundImage: `url(${transport}) `,
@@ -188,6 +207,52 @@ export default function ShipPorts() {
                 }}
               >
                 transports
+              </div>
+            </div>
+
+            <div class="two-blox">
+              <div
+                hidden={hideSecundModal}
+                class="box"
+                onClick={() => {
+                  window.location.href =
+                    "/shipcaptains?id=" + selectedShipPort.id;
+                }}
+                style={{
+                  backgroundImage: `url(${shipCaptain}) `,
+                  "background-repeat": "no-repeat",
+                  backgroundSize: "100%",
+                }}
+              >
+                Ship captains
+              </div>
+              <div
+                hidden={hideSecundModal}
+                class="box"
+                onClick={() => {
+                  window.location.href = "/crew?id=" + selectedShipPort.id;
+                }}
+                style={{
+                  backgroundImage: `url(${crew}) `,
+                  "background-repeat": "no-repeat",
+                  backgroundSize: "100%",
+                }}
+              >
+                Crew
+              </div>
+            </div>
+
+            <div class="two-blox">
+              <div
+                hidden={hideSecundModal}
+                class="box"
+                style={{
+                  backgroundImage: `url(${clerk}) `,
+                  "background-repeat": "no-repeat",
+                  backgroundSize: "100%",
+                }}
+              >
+                Warhouse clerks
               </div>
             </div>
           </div>

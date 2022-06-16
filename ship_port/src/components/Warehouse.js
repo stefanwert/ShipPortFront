@@ -55,7 +55,7 @@ export default function Warehouse() {
 
   const deleteWarehouse = () => {
     if (selectedWarehouse == null) {
-      alert("Plase select ship port first !");
+      alert("Plase select warehouse first !");
       return;
     }
     axios({
@@ -123,7 +123,7 @@ export default function Warehouse() {
           onClick={() => editWarehouseClick()}
           size="lg"
         >
-          Edit ship port
+          Edit warehouse
         </Button>
         <Button
           style={{
