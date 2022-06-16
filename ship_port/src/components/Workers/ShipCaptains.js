@@ -6,7 +6,6 @@ import { serviceConfig } from "../../settings";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 import AddShipCaptain from "./AddShipCaptain";
-import EditShipPort from "../EditShipPort";
 import EditShipCaptain from "./EditShipCaptain";
 
 export default function ShipCaptains() {
@@ -60,7 +59,7 @@ export default function ShipCaptains() {
         setShipCaptains(response.data);
       })
       .catch(() => {
-        console.log("didnt retrieve warehouse");
+        console.log("didnt retrieve ship captain");
       });
 
     axios
@@ -69,7 +68,7 @@ export default function ShipCaptains() {
         setShipPort(response.data);
       })
       .catch(() => {
-        console.log("didnt retrieve warehouse");
+        console.log("didnt retrieve ship port");
       });
   }, []);
 
