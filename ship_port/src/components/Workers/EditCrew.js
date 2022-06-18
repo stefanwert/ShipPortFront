@@ -8,7 +8,7 @@ import axios from "axios";
 import { serviceConfig } from "../../settings";
 import Select from "react-dropdown-select";
 
-export default function AddCrew(props) {
+export default function EditCrew(props) {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [age, setAge] = useState(0);
@@ -18,18 +18,22 @@ export default function AddCrew(props) {
   const [SailingHoursTotal, setSailingHoursTotal] = useState(0);
   const [RoleSelected, setSelectedRole] = useState([1, 2, 3]);
   const [Roles, setRoles] = useState();
+  const [CrewId, setCrewId] = useState();
   const [shipPortId, setshipPortId] = useState(null);
-
-  const handleClose = (event) => {
-    // Here, we invoke the callback with the new value
-    props.onChange(false);
-  };
 
   useEffect(() => {
     const params = new Proxy(new URLSearchParams(window.location.search), {
       get: (searchParams, prop) => searchParams.get(prop),
     });
     setshipPortId(params.id);
+    setCrewId(props?.crew?.id);
+    setName(props?.crew?.name);
+    setSurname(props?.crew?.surname);
+    setAge(props?.crew?.age);
+    setYearsOfWorking(props?.crew?.yearsOfWorking);
+    setSalary(props?.crew?.salary);
+    setIsAvailable(props?.crew?.isAvailable);
+    setSailingHoursTotal(props?.crew?.sailingHoursTotal);
     axios
       .get(`${serviceConfig.URL}/crew/getAllRoles/`)
       .then((response) => {
@@ -39,24 +43,32 @@ export default function AddCrew(props) {
           list.push({ name: element, val: counter++ });
         });
         setRoles(list);
-        setSelectedRole(list[0]);
+        setSelectedRole(list[props?.crew?.role]);
       })
       .catch(() => {
         console.log("didnt retrieve roles");
       });
-  }, []);
+  }, [props]);
 
-  const AddCrew = (e) => {
+  useEffect(() => {
+    console.log(RoleSelected);
+  }, [RoleSelected]);
+
+  const handleClose = (event) => {
+    // Here, we invoke the callback with the new value
+    props.onChange(false);
+  };
+
+  const EditCrewClick = (e) => {
     e.preventDefault();
-    const params = new Proxy(new URLSearchParams(window.location.search), {
-      get: (searchParams, prop) => searchParams.get(prop),
-    });
-    setshipPortId(params.id);
+
     axios({
-      method: "post",
-      url: `${serviceConfig.URL}/crew/`,
+      method: "put",
+      url: `${serviceConfig.URL}/Crew/update`,
       data: {
+        Id: CrewId,
         SailingHoursTotal: SailingHoursTotal,
+        Role: RoleSelected?.val,
         Name: name,
         Surname: surname,
         Age: age,
@@ -64,20 +76,19 @@ export default function AddCrew(props) {
         Salary: Salary,
         IsAvailable: IsAvailable,
         ShipPortId: shipPortId,
-        Role: RoleSelected.val,
       },
     })
       .then((response) => {
         window.location.href = "/crew?id=" + shipPortId;
       })
       .catch((e) => {
-        console.log("didnt added ship");
+        console.log("didnt edited crew");
         console.error(e, e.stack);
       });
   };
 
   return (
-    <Modal show={props.showAddDialog} onHide={handleClose}>
+    <Modal show={props.showEditDialog} onHide={handleClose}>
       <Form>
         <div
           style={{
@@ -171,8 +182,8 @@ export default function AddCrew(props) {
             values={[RoleSelected]}
             onChange={(values) => setSelectedRole(values[0])}
           />
-          <Button onClick={AddCrew} variant="primary" type="submit">
-            Submit
+          <Button onClick={EditCrewClick} variant="primary" type="submit">
+            Edit
           </Button>
         </div>
       </Form>

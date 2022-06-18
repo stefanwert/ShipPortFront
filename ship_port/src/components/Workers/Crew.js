@@ -6,6 +6,7 @@ import { serviceConfig } from "../../settings";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 import AddCrew from "./AddCrew";
+import EditCrew from "./EditCrew";
 
 export default function Crew() {
   var br = 1;
@@ -48,6 +49,27 @@ export default function Crew() {
       });
   }, []);
 
+  const deleteCrew = () => {
+    if (selectedCrew == null) {
+      alert("Plase select crew first !");
+      return;
+    }
+    axios({
+      method: "delete",
+      url: `${serviceConfig.URL}/crew/${selectedCrew?.id}`,
+    })
+      .then((response) => {
+        window.location.href = "/crew?id=" + shipPort.id;
+      })
+      .catch(() => {
+        console.log("didnt deleted crew member");
+      });
+  };
+
+  const editCrewClick = () => {
+    if (selectedCrew == null) return;
+    setShowEditDialog(true);
+  };
   const handleChangeDisplayAddDialog = React.useCallback((newValue) => {
     setShowAddDialog(newValue);
   }, []);
@@ -102,33 +124,39 @@ export default function Crew() {
           setShowAddDialog(true);
         }}
       >
-        Add ship captain
+        Add crew
       </Button>
       <Button
         style={{
           margin: 5,
         }}
-        // onClick={() => {
-        //   editShipCaptainClick();
-        // }}
+        onClick={() => {
+          editCrewClick();
+        }}
         size="lg"
       >
-        Edit ship captain
+        Edit crew
       </Button>
       <Button
         style={{
           margin: 5,
         }}
         size="lg"
-        // onClick={() => {
-        //   deleteShipCaptain();
-        // }}
+        onClick={() => {
+          deleteCrew();
+        }}
       >
         Delete
       </Button>
       <AddCrew
         showAddDialog={showAddDialog}
         onChange={handleChangeDisplayAddDialog}
+      />
+      <EditCrew
+        onChange={handleChangeDisplayEditDialog}
+        showEditDialog={showEditDialog}
+        crew={selectedCrew}
+        Roles={Roles}
       />
     </div>
   );
