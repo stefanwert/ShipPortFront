@@ -8,6 +8,7 @@ import { Nav } from "react-bootstrap";
 import Ships from "./components/Ships";
 import ShipCaptains from "./components/Workers/ShipCaptains";
 import Crew from "./components/Workers/Crew";
+import Clerk from "./components/Workers/Clerk";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/Ships" element={<Ships />} />
         <Route path="/ShipCaptains" element={<ShipCaptains />} />
         <Route path="/Crew" element={<Crew />} />
+        <Route path="/Clerk" element={<Clerk />} />
       </Routes>
     </Router>
   );

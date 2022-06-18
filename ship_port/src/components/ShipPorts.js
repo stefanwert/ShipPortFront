@@ -251,6 +251,9 @@ export default function ShipPorts() {
                   "background-repeat": "no-repeat",
                   backgroundSize: "100%",
                 }}
+                onClick={() => {
+                  window.location.href = "/clerk?id=" + selectedShipPort.id;
+                }}
               >
                 Warhouse clerks
               </div>

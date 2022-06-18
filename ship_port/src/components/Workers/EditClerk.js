@@ -8,17 +8,19 @@ import axios from "axios";
 import { serviceConfig } from "../../settings";
 import Select from "react-dropdown-select";
 
-export default function AddCrew(props) {
+export default function EditClerk(props) {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [age, setAge] = useState(0);
   const [YearsOfWorking, setYearsOfWorking] = useState(0);
   const [Salary, setSalary] = useState(0);
   const [IsAvailable, setIsAvailable] = useState(true);
-  const [SailingHoursTotal, setSailingHoursTotal] = useState(0);
   const [RoleSelected, setSelectedRole] = useState([1, 2, 3]);
   const [Roles, setRoles] = useState();
   const [shipPortId, setshipPortId] = useState(null);
+  const [warehouses, setWarehouses] = useState(null);
+  const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+  const [clerkId, setClerkId] = useState(null);
 
   const handleClose = (event) => {
     // Here, we invoke the callback with the new value
@@ -30,8 +32,33 @@ export default function AddCrew(props) {
       get: (searchParams, prop) => searchParams.get(prop),
     });
     setshipPortId(params.id);
+    setClerkId(props?.clerk?.id);
+    setName(props?.clerk?.name);
+    setSurname(props?.clerk?.surname);
+    setAge(props?.clerk?.age);
+    setYearsOfWorking(props?.clerk?.yearsOfWorking);
+    setSalary(props?.clerk?.salary);
+    setIsAvailable(props?.clerk?.isAvailable);
+    if (warehouses != null && props?.clerk?.warehouseId) {
+      for (var i = 0; i < warehouses.length; i++) {
+        if (warehouses[i].id == props.clerk.warehouseId) {
+          setSelectedWarehouse(warehouses[i]);
+        }
+      }
+    }
+    if (Roles != null && Roles != undefined)
+      setSelectedRole(Roles[props?.clerk?.clerkRole]);
+  }, [props]);
+
+  useEffect(() => {
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+      get: (searchParams, prop) => searchParams.get(prop),
+    });
+
+    setshipPortId(params.id);
+
     axios
-      .get(`${serviceConfig.URL}/crew/getAllRoles/`)
+      .get(`${serviceConfig.URL}/warehouseclerk/getAllRoles/`)
       .then((response) => {
         var list = [];
         var counter = 0;
@@ -44,19 +71,28 @@ export default function AddCrew(props) {
       .catch(() => {
         console.log("didnt retrieve roles");
       });
+
+    axios
+      .get(`${serviceConfig.URL}/warehouse/getAllByShipPortId/` + params.id)
+      .then((response) => {
+        setWarehouses(response.data);
+      })
+      .catch(() => {
+        console.log("didnt retrieve warehouse");
+      });
   }, []);
 
-  const AddCrew = (e) => {
+  const EditClerk = (e) => {
     e.preventDefault();
     const params = new Proxy(new URLSearchParams(window.location.search), {
       get: (searchParams, prop) => searchParams.get(prop),
     });
     setshipPortId(params.id);
     axios({
-      method: "post",
-      url: `${serviceConfig.URL}/crew/`,
+      method: "put",
+      url: `${serviceConfig.URL}/WarehouseClerk/update`,
       data: {
-        SailingHoursTotal: SailingHoursTotal,
+        Id: clerkId,
         Name: name,
         Surname: surname,
         Age: age,
@@ -64,20 +100,21 @@ export default function AddCrew(props) {
         Salary: Salary,
         IsAvailable: IsAvailable,
         ShipPortId: shipPortId,
-        Role: RoleSelected.val,
+        ClerkRole: RoleSelected.val,
+        WarehouseId: selectedWarehouse.id,
       },
     })
       .then((response) => {
-        window.location.href = "/crew?id=" + shipPortId;
+        window.location.href = "/clerk?id=" + shipPortId;
       })
       .catch((e) => {
-        console.log("didnt added ship");
+        console.log("didnt added warehouse clerk");
         console.error(e, e.stack);
       });
   };
 
   return (
-    <Modal show={props.showAddDialog} onHide={handleClose}>
+    <Modal show={props.showEditDialog} onHide={handleClose}>
       <Form>
         <div
           style={{
@@ -142,18 +179,6 @@ export default function AddCrew(props) {
             />
           </Form.Group>
           <Form.Group>
-            <Form.Label>Sailing Hours Total</Form.Label>
-            <Form.Control
-              onChange={(e) => {
-                setSailingHoursTotal(e.target.value);
-              }}
-              value={SailingHoursTotal}
-              type="number"
-              min={0}
-              placeholder="Enter Sailing Hours Total"
-            />
-          </Form.Group>
-          <Form.Group>
             <Form.Check
               onChange={(e) => {
                 setIsAvailable(!IsAvailable);
@@ -165,7 +190,6 @@ export default function AddCrew(props) {
           </Form.Group>
           <Form.Group>
             <Form.Label>Select role</Form.Label>
-
             <Select
               placeholder="Select role"
               options={Roles}
@@ -175,8 +199,19 @@ export default function AddCrew(props) {
               onChange={(values) => setSelectedRole(values[0])}
             />
           </Form.Group>
-          <Button onClick={AddCrew} variant="primary" type="submit">
-            Add
+          <Form.Group>
+            <Form.Label>Select warehouse</Form.Label>
+            <Select
+              placeholder="Select role"
+              options={warehouses}
+              labelField="name"
+              valueField="id"
+              values={[selectedWarehouse]}
+              onChange={(values) => setSelectedWarehouse(values[0])}
+            />
+          </Form.Group>
+          <Button onClick={EditClerk} variant="primary" type="submit">
+            Edit clerk
           </Button>
         </div>
       </Form>
