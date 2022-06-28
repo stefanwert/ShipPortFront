@@ -22,7 +22,7 @@ export default function AddShipPort(props) {
       },
     })
       .then((response) => {
-        window.location.reload(true);
+        window.location.href = "";
       })
       .catch(() => {
         console.log("didnt added ShipPort");
@@ -58,6 +58,7 @@ export default function AddShipPort(props) {
               onChange={(date: Date) => setStartDate(date)}
             />
           </Form.Group>
+
           <Button onClick={addShipPort} variant="primary" type="submit">
             Submit
           </Button>

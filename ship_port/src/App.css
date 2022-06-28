@@ -50,7 +50,7 @@
   width: 300px;
   height: 150px;
   margin: 10px;
-  transition: transform 0.4s ease;
+  transition: transform 0.8s ease;
 }
 
 .box:hover {
@@ -114,4 +114,61 @@
 .navbarprofile a:hover {
   background: #ddd;
   color: black;
+}
+
+.data-Time-Picker {
+  align-items: center;
+  display: flex;
+  margin-top: 30px;
+}
+.data-Time-Picker label {
+  margin-right: 10px;
+}
+
+.bg-image-transport-table {
+  position: fixed;
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  background-attachment: fixed;
+  background: url("/src/resource/transport-table.jpg");
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  width: 100vw;
+  height: 100vh;
+}
+
+.table-Transport {
+  margin: 0 100px 0 100px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  color: white !important;
+}
+
+.table-Transport button {
+  color: black;
+}
+
+.table-cell-state-creating {
+  background-color: rgb(71, 128, 71);
+  text-align: center;
+}
+
+.table-cell-state-canceled {
+  background-color: rgb(128, 93, 71);
+  text-align: center;
+}
+
+.table-cell-state-finished {
+  background-color: rgb(146, 137, 7);
+  text-align: center;
+}
+
+.table-cell-state-transporting {
+  background-color: rgb(128, 87, 224);
+  text-align: center;
 }
