@@ -68,7 +68,7 @@ export default function Ships() {
     <div>
       <h1
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         Table of ships for ship port: {shipPort?.name}

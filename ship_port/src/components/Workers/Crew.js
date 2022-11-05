@@ -82,7 +82,7 @@ export default function Crew() {
     <div>
       <h1
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         Table of ship crew for ship port: {shipPort?.name}

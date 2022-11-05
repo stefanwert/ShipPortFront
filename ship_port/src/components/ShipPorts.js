@@ -110,7 +110,7 @@ export default function ShipPorts() {
 
       <div
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         <Button

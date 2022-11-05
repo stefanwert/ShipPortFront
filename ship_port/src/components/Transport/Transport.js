@@ -8,15 +8,26 @@ import AddTransport from "./AddTransport";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import EditTransport from "./EditTransport";
+import EditShipCaptain from "./EditShipCaptain";
+import AddCargo from "./AddCargo";
+import CargoList from "./CargoList";
+import { useSelector, useDispatch } from 'react-redux'
+import CargoPreview from "./CargoPreview";
+import { updateshowCargoPreview } from './Slice/addTransport'
 
 export default function Transport() {
   const [Transports, setTransports] = useState([]);
   const [selectedTransport, setSelectedTransport] = useState(null);
   var [shipPort, setShipPort] = useState();
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showAddCargoDialog, setShowAddCargoDialog] = useState(true);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showEditCaptainDialog, setShowEditCaptainDialog] = useState(false);
+  const showCargoList = useSelector((state) => state.addTransport.showCargoList);
+  const showAddCargo = useSelector((state) => state.addTransport.showAddCargo);
+  const showCargoPreview = useSelector((state) => state.addTransport.showCargoPreview);
+  const dispatch = useDispatch();
 
-  var br = 1;
   useEffect(() => {
     const params = new Proxy(new URLSearchParams(window.location.search), {
       get: (searchParams, prop) => searchParams.get(prop),
@@ -45,13 +56,31 @@ export default function Transport() {
     console.log(Transports.length);
   }, [Transports]);
 
+  useEffect(() => {
+    console.log("selected transport: "+selectedTransport);
+  }, [selectedTransport]);
+
   const handleChangeDisplayAddDialog = React.useCallback((newValue) => {
     setShowAddDialog(newValue);
   }, []);
+
+  const handleNext = React.useCallback(() => {
+    alert("next");
+    setShowAddDialog(false);
+    setShowAddCargoDialog(true);
+
+  }, []);
+
+  const handleChangeDisplayAddCargoDialog = React.useCallback((newValue) => {
+    setShowAddCargoDialog(newValue);
+  }, []);
+
   const handleChangeDisplayEditDialog = React.useCallback((newValue) => {
     setShowEditDialog(newValue);
   }, []);
-
+  const handleChangeDisplayEditCaptainDialog = React.useCallback((newValue) => {
+    setShowEditCaptainDialog(newValue);
+  }, []);
   const columns = [
     // { field: "id", headerName: "Id", width: 90 },
     {
@@ -107,7 +136,7 @@ export default function Transport() {
       width: 150,
       editable: false,
       valueGetter: (params) => {
-        if (!params?.row?.transportState.includes("Transport"))
+        if (!params?.row?.transportState.endsWith("Transport"))
           return params?.row?.transportState;
         var strings = params?.row?.transportState.split("Transport");
         return strings[0];
@@ -131,6 +160,10 @@ export default function Transport() {
       .catch(() => {
         console.log("didnt deleted transport");
       });
+  };
+
+  const showCargo = () => {
+    dispatch(updateshowCargoPreview(true));
   };
 
   const cancelTransport = () => {
@@ -166,6 +199,8 @@ export default function Transport() {
 
       if (params?.value.includes("Creating"))
         return "table-cell-state-creating";
+    } else {
+      return "standard-cell";
     }
   }
 
@@ -183,12 +218,18 @@ export default function Transport() {
       {/* <img src={transport} alt="" class="bg-image-transport-table" /> */}
       <h1
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
-        Table of transport for ship port: {shipPort?.name}
+        Transport
       </h1>
-
+      <h5
+        style={{
+          "textAlign": "center",
+        }}
+      >
+        Ship port: {shipPort?.name}
+      </h5>
       <div class="table-Transport">
         <Box sx={{ height: 408, width: "100%" }}>
           <DataGrid
@@ -206,7 +247,6 @@ export default function Transport() {
               event: MuiEvent<React.MouseEvent>
             ) => {
               event.defaultMuiPrevented = true;
-              console.log(params.row);
               setSelectedTransport(params.row);
             }}
             getCellClassName={renderCellState}
@@ -215,7 +255,7 @@ export default function Transport() {
       </div>
       <div
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         <Button
@@ -238,15 +278,27 @@ export default function Transport() {
               alert("Please select some transport");
               return;
             }
-            if (selectedTransport.transportState !== "CreatingTransport") {
-              alert("You can only edit transport with creating status !");
+            if (
+              selectedTransport.transportState !== "CreatingTransport" &&
+              selectedTransport.transportState !== "Transporting"
+            ) {
+            }
+            if (selectedTransport.transportState === "Transporting") {
+              setShowEditCaptainDialog(true);
               return;
             }
-            setShowEditDialog(true);
+            if (selectedTransport.transportState === "CreatingTransport") {
+              setShowEditDialog(true);
+              return;
+            }
+            alert(
+              "You can only edit transport with creating status and transporting!"
+            );
+            return;
           }}
           size="lg"
         >
-          Prepare transport
+          Edit transport
         </Button>
         {/* <Button
           style={{
@@ -270,15 +322,50 @@ export default function Transport() {
         >
           Cancel transport
         </Button>
-        <AddTransport
-          showAddDialog={showAddDialog}
-          onChange={handleChangeDisplayAddDialog}
-        />
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            showCargo();
+          }}
+        >
+          Show Cargo
+        </Button>
+        {
+          showAddDialog&&
+          <AddTransport
+            showAddDialog={showAddDialog}
+            onChange={handleChangeDisplayAddDialog}
+          />
+        }
         <EditTransport
           showEditDialog={showEditDialog}
           selectedTransport={selectedTransport}
           onChange={handleChangeDisplayEditDialog}
         />
+        <EditShipCaptain
+          showEditCaptainDialog={showEditCaptainDialog}
+          selectedTransport={selectedTransport}
+          onChange={handleChangeDisplayEditCaptainDialog}
+        />
+        {
+          showAddCargo&& 
+          <AddCargo 
+          onChange={handleChangeDisplayAddCargoDialog}
+          />
+        }
+        {
+          showCargoList&&
+          <CargoList/>
+        }
+        {
+          showCargoPreview&&
+          <CargoPreview
+            cargos = {selectedTransport?.cargos}
+          />
+        }
         {/* <AddWarehouse
           showAddDialog={showAddDialog}
           onChange={handleChangeDisplayAddDialog}

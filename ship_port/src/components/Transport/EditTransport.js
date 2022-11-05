@@ -22,9 +22,17 @@ export default function EditTransport(props) {
   const [crewList, setCrewList] = useState([]);
   const [shipPortList, setShipPortList] = useState([]);
   const [selectedTransport, setSelectedTransport] = useState(null);
+  const [TimeFrom, setTimeFrom] = useState(new Date());
+  const [TimeTo, setTimeTo] = useState(new Date());
 
   useEffect(() => {
+    if( props.selectedTransport == null || props.selectedTransport == undefined) return;
     setSelectedTransport(props?.selectedTransport);
+  }, [props.selectedTransport]);
+  
+
+  useEffect(() => {
+    if(props?.selectedTransport?.shipPortFrom === null || props?.selectedTransport?.shipPortFrom === undefined)return;
     axios
       .get(
         `${serviceConfig.URL}/ship/getAllByShipPortId/` +
@@ -36,19 +44,7 @@ export default function EditTransport(props) {
       })
       .catch(() => {
         console.log("didnt retrieve ship ports");
-      });
-    axios
-      .get(
-        `${serviceConfig.URL}/crew/getAllByShipPortId/` +
-          props?.selectedTransport?.shipPortFrom?.id
-      )
-      .then((response) => {
-        setCrewList(response.data);
-        setSelectedCrew(props?.selectedTransport?.crew);
-      })
-      .catch(() => {
-        console.log("didnt retrieve ship ports");
-      });
+    });
 
     axios
       .get(
@@ -62,11 +58,31 @@ export default function EditTransport(props) {
       .catch(() => {
         console.log("didnt retrieve ship ports");
       });
-  }, [props]);
+
+      axios
+      .get(
+        `${serviceConfig.URL}/crew/getAllByShipPortId/` +
+          props?.selectedTransport?.shipPortFrom?.id
+      )
+      .then((response) => {
+        setCrewList(response.data);
+        setSelectedCrew(props?.selectedTransport?.crew);
+      })
+      .catch(() => {
+        console.log("didnt retrieve ship ports");
+      });
+
+  }, [props?.selectedTransport?.shipPortFrom]);
 
   useEffect(() => {
-    console.log(props);
-  }, []);
+    if(props?.selectedTransport?.timeTo == null || props?.selectedTransport?.timeTo == undefined) return;
+    setTimeTo(props?.selectedTransport?.timeTo);
+  }, [props?.selectedTransport?.timeTo]);
+
+  useEffect(() => {
+    if(props?.selectedTransport?.timeFrom == null || props?.selectedTransport?.timeFrom == undefined)return;
+    setTimeFrom(props?.selectedTransport?.timeFrom);
+  }, [props?.selectedTransport?.timeFrom]);
 
   const EditTransportClick = (e) => {
     e.preventDefault();
@@ -76,9 +92,14 @@ export default function EditTransport(props) {
 
     axios({
       method: "put",
-      url: `${serviceConfig.URL}/Transport/`,
+      url: `${serviceConfig.URL}/Transport/update`,
       data: {
-        //   Id:
+        Id: selectedTransport?.id,
+        TimeFrom: TimeFrom,
+        TimeTo: TimeTo,
+        ShipPortFrom: selectedTransport?.shipPortFrom,
+        ShipPortTo: selectedTransport?.shipPortTo,
+        TransportState: selectedTransport?.transportState,
         Ship: selectedShip,
         ShipCaptains: shipCaptainsSelected,
         Crew: selectedCrew,
@@ -106,7 +127,7 @@ export default function EditTransport(props) {
             margin: "10px",
           }}
         >
-          {/* <Form.Group className="data-Time-Picker">
+          <Form.Group className="data-Time-Picker">
             <Form.Label>Time from</Form.Label>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DateTimePicker
@@ -131,7 +152,7 @@ export default function EditTransport(props) {
                 }}
               />
             </LocalizationProvider>
-          </Form.Group> */}
+          </Form.Group>
 
           {/* <Form.Group>
             <Form.Label>Select ship port from</Form.Label>

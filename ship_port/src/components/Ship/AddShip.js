@@ -46,7 +46,7 @@ export default function AddShip(props) {
           }}
         >
           <Form.Group>
-            <Form.Label>Name asddasa</Form.Label>
+            <Form.Label>Name</Form.Label>
             <Form.Control
               value={shipName}
               onChange={(e) => {

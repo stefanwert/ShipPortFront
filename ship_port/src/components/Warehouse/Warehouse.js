@@ -75,7 +75,7 @@ export default function Warehouse() {
     <div>
       <h1
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         Table of warehouses for ship port: {shipPort?.name}
@@ -102,7 +102,7 @@ export default function Warehouse() {
       </Table>
       <div
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         <Button

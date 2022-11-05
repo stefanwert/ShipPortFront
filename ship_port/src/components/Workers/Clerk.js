@@ -83,7 +83,7 @@ export default function Clerk() {
     <div>
       <h1
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         Table of warehouse cler for ship port: {shipPort?.name}

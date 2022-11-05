@@ -1,8 +1,8 @@
 import React, { useEffect, useTransition } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { useState } from "react";
 import Button from "react-bootstrap/Button";
+import { useState } from "react";
 import axios from "axios";
 import { serviceConfig } from "../../settings";
 import TextField from "@mui/material/TextField";
@@ -11,12 +11,16 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import Select from "react-dropdown-select";
 import ShipPorts from "../ShipPorts";
+import { useSelector, useDispatch } from 'react-redux'
+import { updateTransport, updateShowCargoList} from './Slice/addTransport'
 
 export default function AddTransport(props) {
   const [TimeFrom, setTimeFrom] = useState(new Date());
   const [TimeTo, setTimeTo] = useState(new Date());
   const [selectedShip, setSelectedShip] = useState({});
   const [shipList, setShipList] = useState([]);
+  const [selectedWarehouse, setSelectedWarehouse] = useState({});
+  const [warhouseList, setWarhouseList] = useState([]);
   const [shipCaptainsSelected, setShipCaptainsSelected] = useState([]);
   const [shipCaptainList, setShipCaptainList] = useState([]);
   const [currentShipCaptain, setCurrentShipCaptain] = useState();
@@ -25,6 +29,8 @@ export default function AddTransport(props) {
   const [shipPortList, setShipPortList] = useState([]);
   const [shipPortFrom, setShipPortFrom] = useState({ name: "" });
   const [shipPortTo, setShipPortTo] = useState({ name: "" });
+  const dispatch = useDispatch();
+  const showAddCargo = useSelector((state) => state.addTransport.showAddCargo);
 
   useEffect(() => {
     axios
@@ -43,7 +49,11 @@ export default function AddTransport(props) {
   }, [selectedCrew]);
 
   useEffect(() => {
-    if (shipPortFrom == null) return;
+    if (shipPortFrom?.id === null || shipPortFrom?.id === undefined) return;
+    // setSelectedWarehouse(null);
+    // setSelectedShip(null);
+    // setSelectedCrew(null);
+    // setShipCaptainsSelected(null);
     axios
       .get(`${serviceConfig.URL}/ship/getAllByShipPortId/` + shipPortFrom?.id)
       .then((response) => {
@@ -53,6 +63,14 @@ export default function AddTransport(props) {
         console.log("didnt retrieve ship ports");
       });
 
+    axios
+    .get(`${serviceConfig.URL}/Warehouse/getAllByShipPortId/` + shipPortFrom?.id)
+    .then((response) => {
+      setWarhouseList(response.data);
+    })
+    .catch(() => {
+      console.log("didnt retrieve ship ports");
+    });
     axios
       .get(`${serviceConfig.URL}/crew/getAllByShipPortId/` + shipPortFrom?.id)
       .then((response) => {
@@ -74,41 +92,46 @@ export default function AddTransport(props) {
         console.log("didnt retrieve ship ports");
       });
   }, [shipPortFrom]);
-
-  const AddTransportClick = (e) => {
+  
+  const OpenCargoListWindow = (e) =>{
     e.preventDefault();
-    const params = new Proxy(new URLSearchParams(window.location.search), {
-      get: (searchParams, prop) => searchParams.get(prop),
-    });
-    axios({
-      method: "post",
-      url: `${serviceConfig.URL}/Transport/`,
-      data: {
-        TimeFrom: TimeFrom,
-        TimeTo: TimeTo,
-        Ship: selectedShip,
-        ShipCaptains: shipCaptainsSelected,
-        Crew: selectedCrew,
-        ShipPortFrom: shipPortFrom,
-        ShipPortTo: shipPortTo,
-        //
-        // public DateTime TimeFrom { get; set; }
-        // public DateTime TimeTo { get; set; }
-        // public ShipDTO Ship { get; set; }
-        // public ICollection<ShipCaptainDTO> ShipCaptains { get; set; }
-        // public ShipCaptainDTO CurrentShipCaptain { get; set; }
-        // public ICollection<CrewDTO> Crew { get; set; }
-        // public ShipPortDTO ShipPortFrom { get; set; }
-        // public ShipPortDTO ShipPortTo { get; set; }
-      },
-    })
-      .then((response) => {
-        window.location.href = "/transport?id=" + params.id;
-      })
-      .catch((e) => {
-        console.error(e, e.stack);
-        alert(e.response.data);
-      });
+    if(shipPortFrom.name.length === 0){
+      alert("Select ship from from!");
+      return;
+    }
+    if(shipPortTo.name.length === 0){
+      alert("Select ship port to!");
+      return;
+    }
+    if(selectedShip && Object.keys(selectedShip).length === 0 && Object.getPrototypeOf(selectedShip) === Object.prototype){
+      alert("Select ship!");
+      return;
+    }
+    if(selectedWarehouse && Object.keys(selectedWarehouse).length === 0 && Object.getPrototypeOf(selectedWarehouse) === Object.prototype){
+      alert("Select warehouse!");
+      return;
+    }
+    if(selectedCrew.length === 0){
+      alert("Select crew!");
+      return;
+    }
+    if(shipCaptainsSelected.length === 0){
+      alert("Select ship captains!");
+      return;
+    }
+    const data = {
+      TimeFrom: TimeFrom,
+      TimeTo: TimeTo,
+      Ship: selectedShip,
+      ShipCaptains: shipCaptainsSelected,
+      Crew: selectedCrew,
+      ShipPortFrom: shipPortFrom,
+      ShipPortTo: shipPortTo,
+      Warehouse: selectedWarehouse,
+    };
+    dispatch(updateTransport(data));
+    dispatch(updateShowCargoList(true));
+    handleClose();
   };
 
   const handleClose = (event) => {
@@ -196,6 +219,20 @@ export default function AddTransport(props) {
             />
           </Form.Group>
           <Form.Group>
+            <Form.Label>Select warehouse </Form.Label>
+            <Select
+              disabled={false}
+              placeholder="Select role"
+              options={warhouseList}
+              labelField="name"
+              valueField="id"
+              values={[selectedWarehouse]}
+              onChange={(values) => {
+                setSelectedWarehouse(values[0]);
+              }}
+            />
+          </Form.Group>
+          <Form.Group>
             <Form.Label>Select crew members </Form.Label>
             <Select
               disabled={false}
@@ -225,10 +262,12 @@ export default function AddTransport(props) {
               }}
             />
           </Form.Group>
-
-          <Button onClick={AddTransportClick} variant="primary" type="submit">
-            Submit
+          <Button onClick={OpenCargoListWindow} variant="primary" type="submit">
+            Next
           </Button>
+          {/* <Button onClick={AddTransportClick} variant="primary" type="submit">
+            Submit
+          </Button> */}
         </div>
       </Form>
     </Modal>

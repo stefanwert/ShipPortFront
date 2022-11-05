@@ -76,7 +76,7 @@ export default function ShipCaptains() {
     <div>
       <h1
         style={{
-          "text-align": "center",
+          "textAlign": "center",
         }}
       >
         Table of ship captains for ship port: {shipPort?.name}

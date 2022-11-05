@@ -172,3 +172,27 @@
   background-color: rgb(128, 87, 224);
   text-align: center;
 }
+
+.standard-cell {
+  background-color: #096aae;
+  /* #3385c0; */
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
+  padding: 10px;
+}
+
+.grid-container-backgruond{
+  background-color: #87c6f9;
+  min-width: 920px;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+}
+
+.cargo-card.card{
+  transition: border 200ms ease;
+}
