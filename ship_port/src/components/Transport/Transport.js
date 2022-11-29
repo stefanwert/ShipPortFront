@@ -293,17 +293,6 @@ export default function Transport() {
         >
           Edit transport
         </Button>
-        {/* <Button
-          style={{
-            margin: 5,
-          }}
-          size="lg"
-          onClick={() => {
-            deleteTransport();
-          }}
-        >
-          Delete transport
-        </Button> */}
         <Button
           style={{
             margin: 5,

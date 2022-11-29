@@ -33,13 +33,14 @@ export default function Register() {
             window.location.href = "/login";
         })
         .catch(() => {
-            alert("Registration faild !");
+            // alert("Registration faild !");
             setEmail("");
             setPassword("");
             setPassword2("");
             setName("");
             setSurename("");
-            window.location.reload(false);
+            window.location.href = "/login";
+            // window.location.reload(false);
         });
     };
 

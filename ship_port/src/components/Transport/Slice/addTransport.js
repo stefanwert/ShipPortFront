@@ -34,6 +34,7 @@ export const addTransportSlice = createSlice({
     },
 
     isAdimnCalculate:(state)=>{
+      debugger;
       const  token = window.localStorage.getItem('token');
       if(token === null){
         return;

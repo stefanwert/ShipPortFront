@@ -17,7 +17,7 @@ import Home from "./components/Home";
 import { useState, useEffect } from "react";
 import AllWarehouse from "./components/Warehouse/AllWarehouse";
 import RequireAuth from "./components/Auth/RequireAuth";
-import RequireAuthMenager from "./components/Auth/RequireAuthMenager";
+import RequireAuthAdmin from "./components/Auth/RequireAuthAdmin";
 import jwt_decode from 'jwt-decode';
 
 function App() {
@@ -78,9 +78,9 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Warehouses" element={
-          <RequireAuth>
+          <RequireAuthAdmin>
             <Warehouse />
-          </RequireAuth>} />
+          </RequireAuthAdmin>} />
         <Route path="/Ships" element={
           <RequireAuth>
             <Ships />
@@ -100,18 +100,18 @@ function App() {
           </RequireAuth>
           } />
         <Route path="/Transport" element={
-          <RequireAuthMenager>
+          <RequireAuthAdmin>
             <Transport />
-          </RequireAuthMenager>
+          </RequireAuthAdmin>
           } />
         <Route path="/Home" element={
           <RequireAuth>
             <Home />
           </RequireAuth>} />
         <Route path="/AllWarehouse" element={
-          <RequireAuthMenager>
+          <RequireAuthAdmin>
             <AllWarehouse />
-          </RequireAuthMenager>} />
+          </RequireAuthAdmin>} />
       </Routes>
     </Router>
   );

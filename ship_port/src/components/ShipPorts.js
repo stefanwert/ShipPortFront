@@ -13,10 +13,13 @@ import warehouse from "../resource/warehouse.jpg";
 import shipCaptain from "../resource/shipCaptain.jpg";
 import crew from "../resource/crew.jpg";
 import clerk from "../resource/clerk.jfif";
-
 import "react-datepicker/dist/react-datepicker.css";
 import EditShipPort from "./EditShipPort";
 import AddShipPort from "./AddShipPort";
+import { isAdimnCalculate} from '../components/Transport/Slice/addTransport'
+import { useSelector, useDispatch } from 'react-redux'
+import Box from "@mui/material/Box";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
 export default function ShipPorts() {
   const [ShipPorts, setShipPorts] = useState();
@@ -26,6 +29,9 @@ export default function ShipPorts() {
   const [hideFirstModal, setHideFirstModal] = useState(false);
   const [hideSecundModal, setHideSecundModal] = useState(true);
   const [displayEditDialog, setDisplayEditDialog] = useState(false);
+  const dispatch = useDispatch();
+  const isAdmin = useSelector((state) => state.addTransport.isAdmin);
+  
 
   const handleClose = () => {
     setHideFirstModal(false);
@@ -36,6 +42,7 @@ export default function ShipPorts() {
   var br = 0;
 
   useEffect(() => {
+    dispatch(isAdimnCalculate());
     axios
       .get(`${serviceConfig.URL}/shipport/getAll`)
       .then((response) => {
@@ -83,8 +90,71 @@ export default function ShipPorts() {
     setDisplayEditDialog(true);
   };
 
+  const columns = [
+    // { field: "id", headerName: "Id", width: 90 },
+    {
+      field: "Name",
+      headerName: "Name",
+      width: 150,
+      editable: false,
+      valueGetter: (params) => {
+        return params.row.name;
+      },
+    },
+    {
+      field: "timeOfCreation",
+      headerName: "Time of creation",
+      width: 150,
+      editable: false,
+      valueFormatter: (params) => {
+        var strings = params.value.split("T");
+        return strings[0];
+      },
+    },
+    {
+      field: "Number Of Worker",
+      headerName: "Number Of Workers",
+      width: 160,
+      editable: false,
+      valueGetter: (params) => {
+        console.log(params);
+        return params.row.numberOfWorker;
+      },
+    },
+    {
+      field: "Number Of Ships",
+      headerName: "Number Of Ships",
+      width: 150,
+      editable: false,
+      valueGetter: (params) => {
+        console.log(params);
+        return params.row.numberOfShips;
+      },
+    },
+    {
+      field: "Number Of Warehouses",
+      headerName: "Number Of Warehouses",
+      width: 200,
+      editable: false,
+      valueGetter: (params) => {
+        console.log(params);
+        return params.row.numberOfWarehouses;
+      },
+    },
+    {
+      field: "Number Of Warehouses That Store Flammable",
+      headerName: "Number Of Warehouses That Store Flammable",
+      width: 350,
+      editable: false,
+      valueGetter: (params) => {
+        console.log(params);
+        return params.row.numberOfWarehousesThatStoreFlammable;
+      },
+    },
+  ];
+
   return (
-    <div>
+    <div className="bg-image-ship-port-table ">
       <h1
         style={{
           "textAlign": "center",
@@ -92,28 +162,40 @@ export default function ShipPorts() {
       >
         Table of ship ports
       </h1>
-      <Table responsive bordered hover>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th>time of creation</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ShipPorts?.map((s) => (
-            <tr
-              key={s.id}
-              onClick={() => setSelectedShipPort(s)}
-              onDoubleClick={() => showOptions()}
-            >
-              <td>{br++}</td>
-              <td>{s.name}</td>
-              <td>{s.timeOfCreation.substring(0, 10)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <div class="table-Ships-Port">
+
+        { ShipPorts?
+          <Box sx={{ height: 408, width: "100%" }}>
+            <DataGrid
+              getRowId={(row) => row.id}
+              rows={ShipPorts}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              disableSelectionOnClick
+              components={{
+                Toolbar: GridToolbar,
+              }}
+              onCellClick={(
+                params: GridCellParams,
+                event: MuiEvent<React.MouseEvent>
+                ) => {
+                  event.defaultMuiPrevented = true;
+                  setSelectedShipPort(params.row);
+                }}
+                onRowDoubleClick={(
+                  params: GridCellParams,
+                  event: MuiEvent<React.MouseEvent>
+                ) => {
+                    event.defaultMuiPrevented = true;
+                    setSelectedShipPort(params.row);
+                    setShow(true);
+                  }}
+                />
+          </Box>
+          :null
+        }
+      </div>
 
       <div
         style={{
@@ -188,37 +270,42 @@ export default function ShipPorts() {
                 workers
               </div>
             </div>
-            <div class="two-blox">
-              <div
-                hidden={hideFirstModal}
-                onClick={() => {
-                  window.location.href =
-                    "/warehouses?id=" + selectedShipPort.id;
-                }}
-                class="box"
-                style={{
-                  backgroundImage: `url(${warehouse}) `,
-                  "background-repeat": "no-repeat",
-                  backgroundSize: "100%",
-                }}
-              >
-                warehouses
+            {
+              isAdmin?
+              <div class="two-blox">
+                <div
+                  hidden={hideFirstModal}
+                  onClick={() => {
+                    window.location.href =
+                      "/warehouses?id=" + selectedShipPort.id;
+                  }}
+                  class="box"
+                  style={{
+                    backgroundImage: `url(${warehouse}) `,
+                    "background-repeat": "no-repeat",
+                    backgroundSize: "100%",
+                  }}
+                >
+                  warehouses
+                </div>
+                <div
+                  hidden={hideFirstModal}
+                  class="box"
+                  style={{
+                    backgroundImage: `url(${transport}) `,
+                    "background-repeat": "no-repeat",
+                    backgroundSize: "100%",
+                  }}
+                  onClick={() => {
+                    window.location.href = "/transport?id=" + selectedShipPort.id;
+                  }}
+                >
+                  transports
+                </div>
               </div>
-              <div
-                hidden={hideFirstModal}
-                class="box"
-                style={{
-                  backgroundImage: `url(${transport}) `,
-                  "background-repeat": "no-repeat",
-                  backgroundSize: "100%",
-                }}
-                onClick={() => {
-                  window.location.href = "/transport?id=" + selectedShipPort.id;
-                }}
-              >
-                transports
-              </div>
-            </div>
+              :null
+            }
+            
 
             <div class="two-blox">
               <div
