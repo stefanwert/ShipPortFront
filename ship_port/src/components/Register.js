@@ -10,9 +10,9 @@ export default function Register() {
     const [password2, setPassword2] = useState("");
     const [name, setName] = useState("");
     const [surename, setSurename] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const register = (e) => {
-        debugger;
         e.preventDefault();
         if(password !== password2){
             alert("Passwords don't match !!!");
@@ -26,7 +26,7 @@ export default function Register() {
                 Password: password,
                 Name: name,
                 Surename: surename,
-                Role: "Menager"
+                Role: isAdmin? "Admin": "Menager"
             },
         })
         .then(() => {
@@ -51,7 +51,7 @@ export default function Register() {
             <form class="p-3 mt-3">
                 <div class="form-field d-flex align-items-center">
                     <span class="far fa-user"></span>
-                    <input type="Email" name="Email" id="Email" placeholder="Email" value={email} onChange={(e) => { setEmail(e.target.value); }}/>
+                    <input checked={isAdmin} type="email" name="Email" id="Email" placeholder="Email" value={email} onChange={(e) => { setEmail(e.target.value); }}/>
                 </div>
                 <div class="form-field d-flex align-items-center">
                     <span class="fas fa-key"></span>
@@ -68,6 +68,10 @@ export default function Register() {
                 <div class="form-field d-flex align-items-center">
                     <span class="fas fa-key"></span>
                     <input type="password" name="password2" id="pwd2" placeholder="Confirm password" value={password2} onChange={(e) => { setPassword2(e.target.value); }}/>
+                </div>
+                <div class="form-check form-switch">
+                    <input onChange={(e)=>setIsAdmin(!isAdmin)} value={isAdmin} class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Are you admin</label>
                 </div>
                 <button class="btn mt-3" onClick={register}>Register</button>
             </form>

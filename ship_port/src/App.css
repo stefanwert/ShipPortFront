@@ -235,3 +235,31 @@ body {
 .black-text{
   color: black;
 }
+
+.bg-image-ship-table {
+  position: fixed;
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  background-attachment: fixed;
+  background: url("/src/resource/ships-table.jpg");
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  width: 100vw;
+  height: 100vh;
+}
+
+.table-Ships {
+  margin: 0 300px 0 300px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  color: white !important;
+}
+
+.table-Ships button {
+  color: black;
+}

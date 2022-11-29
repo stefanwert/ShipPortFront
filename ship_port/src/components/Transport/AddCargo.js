@@ -89,14 +89,13 @@ export default function AddCargo(props) {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Flammable</Form.Label>
               <Form.Check
                 onChange={(e) => {
                   setFlammable(!flammable);
                 }}
                 checked={flammable === true ? "on" : ""}
                 type="switch"
-                label="Is available"
+                label="Is flammable"
               />
             </Form.Group>
             
