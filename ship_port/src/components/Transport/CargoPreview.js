@@ -26,7 +26,7 @@ export default function CargoPreview(props) {
     return (
         <Modal show={true} onHide={handleClose}>
             <div className='grid-container-backgruond ' >
-                <h1>CARGO FOR SELECTED TRANSPORT:</h1>
+                <h1>CARGO FOR SELECTED ITEM:</h1>
                 <div className='grid-container'>
                     {props?.cargos?.map(function(card, idx){
                         return (<Card id={card.id} key ={card.id}  className="cargo-card" style={{ width: '18rem', border: card.isSelected? "5px solid black" : ""}}>

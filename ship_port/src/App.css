@@ -196,3 +196,42 @@
 .cargo-card.card{
   transition: border 200ms ease;
 }
+
+
+/* Importing fonts from Google */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Reseting */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #ecf0f3;
+}
+
+.logout-btn{
+  margin-left: auto; 
+  margin-right: 0;
+}
+
+.ships-table{
+  position: fixed;
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  background-attachment: fixed;
+  background: url("/src/resource/ships-table.jpg");
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  width: 100vw;
+  height: 100vh;
+}
+
+.black-text{
+  color: black;
+}

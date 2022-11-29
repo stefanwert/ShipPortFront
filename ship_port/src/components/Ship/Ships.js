@@ -65,7 +65,7 @@ export default function Ships() {
       });
   }, []);
   return (
-    <div>
+    <div className="ships-table black-text">
       <h1
         style={{
           "textAlign": "center",
@@ -75,7 +75,7 @@ export default function Ships() {
       </h1>
       <Table responsive bordered hover>
         <thead>
-          <tr>
+          <tr className="black-text">
             <th></th>
             <th>Name</th>
             <th>Price</th>
@@ -83,7 +83,7 @@ export default function Ships() {
         </thead>
         <tbody>
           {ships?.map((s) => (
-            <tr key={s.id} onClick={() => setSelectedShip(s)}>
+            <tr key={s.id} onClick={() => setSelectedShip(s)} className="black-text">
               <td>{br++}</td>
               <td>{s.name}</td>
               <td>{s.price}</td>
@@ -91,48 +91,55 @@ export default function Ships() {
           ))}
         </tbody>
       </Table>
-      <Button
+      <div
         style={{
-          margin: 5,
-        }}
-        size="lg"
-        onClick={() => {
-          setShowAddDialog(true);
+          "textAlign": "center",
         }}
       >
-        Add ship
-      </Button>
-      <Button
-        style={{
-          margin: 5,
-        }}
-        onClick={() => {
-          setShowEditDialog(true);
-        }}
-        size="lg"
-      >
-        Edit ship
-      </Button>
-      <Button
-        style={{
-          margin: 5,
-        }}
-        size="lg"
-        onClick={() => {
-          deleteShip();
-        }}
-      >
-        Delete
-      </Button>
-      <AddShip
-        showAddDialog={showAddDialog}
-        onChange={handleChangeDisplayAddDialog}
-      />
-      <EditShip
-        showEditDialog={showEditDialog}
-        onChange={handleChangeDisplayEditDialog}
-        ship={selectedShip}
-      />
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            setShowAddDialog(true);
+          }}
+          >
+          Add ship
+        </Button>
+        <Button
+          style={{
+            margin: 5,
+          }}
+          onClick={() => {
+            setShowEditDialog(true);
+          }}
+          size="lg"
+        >
+          Edit ship
+        </Button>
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            deleteShip();
+          }}
+        >
+          Delete
+        </Button>
+        <AddShip
+          showAddDialog={showAddDialog}
+          onChange={handleChangeDisplayAddDialog}
+        />
+        <EditShip
+          showEditDialog={showEditDialog}
+          onChange={handleChangeDisplayEditDialog}
+          ship={selectedShip}
+        />
+      </div>
+
     </div>
   );
 }

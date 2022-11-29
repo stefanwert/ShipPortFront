@@ -10,26 +10,108 @@ import ShipCaptains from "./components/Workers/ShipCaptains";
 import Crew from "./components/Workers/Crew";
 import Clerk from "./components/Workers/Clerk";
 import Transport from "./components/Transport/Transport";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import '../src/styles/login.css';
+import Home from "./components/Home";
+import { useState, useEffect } from "react";
+import AllWarehouse from "./components/Warehouse/AllWarehouse";
+import RequireAuth from "./components/Auth/RequireAuth";
+import RequireAuthMenager from "./components/Auth/RequireAuthMenager";
+import jwt_decode from 'jwt-decode';
 
 function App() {
+  const [isMenager, setIsMenager] = useState(false);
+  const logout = () => {
+    window.localStorage.removeItem('token');
+    window.location.reload(false);
+  }
+  useEffect(() => {
+    const  token = window.localStorage.getItem('token');
+    if(token === null){
+      return;
+    }
+    var user = jwt_decode(token);
+    if(user === null)
+      return ;
+    const role = user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    setIsMenager(role==="Admin");
+  }, []);
+
   return (
     <Router>
-      <Nav className="navbar">
-        <Nav.Item>
-          <Nav.Link href="/">ShipPorts</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link href="/Warehouses">Warehouses</Nav.Link>
-        </Nav.Item>
+      <Nav  className="navbar navbar-dark bg-primary">
+        { !window.localStorage.getItem('token')?
+        <>
+            <Nav.Item>
+              <Nav.Link href="/Register">Register</Nav.Link>
+            </Nav.Item>
+            <Nav.Item class="logout-btn">
+              <Nav.Link href="/Login">Login</Nav.Link>
+            </Nav.Item>
+          </>
+          : 
+        <>
+          <Nav.Item>
+            <Nav.Link href="/">ShipPorts</Nav.Link>
+          </Nav.Item>
+          {isMenager?
+            <Nav.Item>
+              <Nav.Link href="/AllWarehouse">Warehouses</Nav.Link>
+            </Nav.Item>
+            :
+            null
+          }
+          <Nav.Item class="logout-btn">
+            <Nav.Link onClick={logout}>Logout</Nav.Link>
+          </Nav.Item>
+        </>
+        }
+        
       </Nav>
       <Routes>
-        <Route path="/" element={<ShipPorts />} />
-        <Route path="/Warehouses" element={<Warehouse />} />
-        <Route path="/Ships" element={<Ships />} />
-        <Route path="/ShipCaptains" element={<ShipCaptains />} />
-        <Route path="/Crew" element={<Crew />} />
-        <Route path="/Clerk" element={<Clerk />} />
-        <Route path="/Transport" element={<Transport />} />
+        <Route path="/" element={
+          <RequireAuth>
+            <ShipPorts />
+          </RequireAuth>
+        } />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Register" element={<Register />} />
+        <Route path="/Warehouses" element={
+          <RequireAuth>
+            <Warehouse />
+          </RequireAuth>} />
+        <Route path="/Ships" element={
+          <RequireAuth>
+            <Ships />
+          </RequireAuth>} />
+        <Route path="/ShipCaptains" element={
+          <RequireAuth>
+            <ShipCaptains />
+          </RequireAuth>} />
+        <Route path="/Crew" element={
+          <RequireAuth>
+            <Crew />
+          </RequireAuth>
+          } />
+        <Route path="/Clerk" element={
+          <RequireAuth>
+            <Clerk />
+          </RequireAuth>
+          } />
+        <Route path="/Transport" element={
+          <RequireAuthMenager>
+            <Transport />
+          </RequireAuthMenager>
+          } />
+        <Route path="/Home" element={
+          <RequireAuth>
+            <Home />
+          </RequireAuth>} />
+        <Route path="/AllWarehouse" element={
+          <RequireAuthMenager>
+            <AllWarehouse />
+          </RequireAuthMenager>} />
       </Routes>
     </Router>
   );

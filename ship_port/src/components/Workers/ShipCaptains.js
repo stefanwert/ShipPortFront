@@ -109,48 +109,54 @@ export default function ShipCaptains() {
           ))}
         </tbody>
       </Table>
-      <Button
+      <div
         style={{
-          margin: 5,
-        }}
-        size="lg"
-        onClick={() => {
-          setShowAddDialog(true);
+          "textAlign": "center",
         }}
       >
-        Add ship captain
-      </Button>
-      <Button
-        style={{
-          margin: 5,
-        }}
-        onClick={() => {
-          editShipCaptainClick();
-        }}
-        size="lg"
-      >
-        Edit ship captain
-      </Button>
-      <Button
-        style={{
-          margin: 5,
-        }}
-        size="lg"
-        onClick={() => {
-          deleteShipCaptain();
-        }}
-      >
-        Delete
-      </Button>
-      <AddShipCaptain
-        showAddDialog={showAddDialog}
-        onChange={handleChangeDisplayAddDialog}
-      />
-      <EditShipCaptain
-        showEditDialog={showEditDialog}
-        onChange={handleChangeDisplayEditDialog}
-        shipCaptain={selectedShipcaptain}
-      />
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            setShowAddDialog(true);
+          }}
+          >
+          Add ship captain
+        </Button>
+        <Button
+          style={{
+            margin: 5,
+          }}
+          onClick={() => {
+            editShipCaptainClick();
+          }}
+          size="lg"
+          >
+          Edit ship captain
+        </Button>
+        <Button
+          style={{
+            margin: 5,
+          }}
+          size="lg"
+          onClick={() => {
+            deleteShipCaptain();
+          }}
+          >
+          Delete
+        </Button>
+        <AddShipCaptain
+          showAddDialog={showAddDialog}
+          onChange={handleChangeDisplayAddDialog}
+          />
+        <EditShipCaptain
+          showEditDialog={showEditDialog}
+          onChange={handleChangeDisplayEditDialog}
+          shipCaptain={selectedShipcaptain}
+          />
+      </div>
     </div>
   );
 }

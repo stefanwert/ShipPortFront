@@ -207,13 +207,6 @@ export default function Transport() {
   return (
     <div
       class="bg-image-transport-table"
-      // style={{
-      //   backgroundImage: `url(${transport}) `,
-      //   "background-repeat": "no-repeat",
-      //   backgroundSize: "100%",
-      //   height: "100vh",
-      //   width: "100vw",
-      // }}
     >
       {/* <img src={transport} alt="" class="bg-image-transport-table" /> */}
       <h1

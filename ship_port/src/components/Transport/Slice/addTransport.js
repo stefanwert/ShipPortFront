@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import jwt_decode from 'jwt-decode';
 
 export const addTransportSlice = createSlice({
   name: 'addTransport',
@@ -8,6 +9,7 @@ export const addTransportSlice = createSlice({
     showCargoList: false,
     showCargoPreview: false,
     reloadCargoListOnPropChange: false,
+    isAdmin: false,
   },
   reducers: {
     
@@ -30,11 +32,23 @@ export const addTransportSlice = createSlice({
     updateshowCargoPreview: (state, action) => {
       state.showCargoPreview = action.payload
     },
+
+    isAdimnCalculate:(state)=>{
+      const  token = window.localStorage.getItem('token');
+      if(token === null){
+        return;
+      }
+      var user = jwt_decode(token);
+      if(user === null)
+        return ;
+      const role = user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      state.isAdmin = role==="Admin";
+    }
     
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { updateTransport, updateShowAddCargo, updateShowCargoList, updateReloadCargoListOnPropChange, updateshowCargoPreview } = addTransportSlice.actions
+export const { updateTransport, updateShowAddCargo, updateShowCargoList, updateReloadCargoListOnPropChange, updateshowCargoPreview, isAdimnCalculate } = addTransportSlice.actions
 
 export default addTransportSlice.reducer
